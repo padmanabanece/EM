@@ -13,4 +13,15 @@ public with sharing class TransactionLogHandler {
              insert transactionLog;
          }
     }
+    public static void doHandleExceptionWithError(String errors, String processName){
+        Error_Log__c transactionLog = new Error_Log__c(
+            Log_Details__c = errors,
+            Lod_DateTime__c=System.now(),
+            Process_Name__c=processName
+            
+         );
+         if (Schema.SObjectType.Error_Log__c.isCreateable()) {
+            insert transactionLog;
+        }
+    }
 }
