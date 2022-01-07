@@ -22,8 +22,8 @@ public  class DeleteEventBatchTest {
              Max_Seats__c=40,
              Recurring__c=true,
              Live__c=true,
-             Start_DateTime__c=System.now(),
-             End_Date_Time__c=System.now().addDays(3)
+             Start_DateTime__c=System.now().addMonths(-4),
+             End_Date_Time__c=System.now().addDays(3).addMonths(-4)
  
          );
          eventList.add(event);
