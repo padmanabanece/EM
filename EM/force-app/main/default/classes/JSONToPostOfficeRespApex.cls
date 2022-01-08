@@ -5,16 +5,19 @@ public class JSONToPostOfficeRespApex {
 
     public class PostOffice {
 		public String Name;
-		public String Description;
-		public String PINCode;
+		public Object Description;
 		public String BranchType;
 		public String DeliveryStatus;
 		public String Circle;
 		public String District;
 		public String Division;
 		public String Region;
+		public String Block;
 		public String State;
 		public String Country;
+		public String Pincode;
 	}
- 
+public static List<JSONToPostOfficeRespApex> parse(String json) {
+    return (List<JSONToPostOfficeRespApex>) System.JSON.deserialize(json, List<JSONToPostOfficeRespApex>.class);
+}
 }

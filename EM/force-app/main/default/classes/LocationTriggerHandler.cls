@@ -3,7 +3,7 @@ public class LocationTriggerHandler {
     public static void verifyAddress(String id){
 
         
-        Location__c location=[SELECT Id,Postal_Code__c,State__c,City__c FROM Location__c
+        Location__c location=[SELECT Id,Postal_Code__c,State__c,City__c,Verified__c FROM Location__c
                                             WHERE Id=:id];
 
         String baseUrl='https://api.postalpincode.in/pincode/';
@@ -12,7 +12,7 @@ public class LocationTriggerHandler {
         HttpRequest httpReq = new HttpRequest();
         httpReq.setMethod('GET');
         httpReq.setEndpoint(endpoint);
-        httpReq.setHeader('Content-Type', 'application/json');
+        //httpReq.setHeader('Content-Type', 'application/json');
 
         HttpResponse httpRes = new HttpResponse();
 
@@ -21,14 +21,20 @@ public class LocationTriggerHandler {
             httpRes= http.send(httpReq);
             System.debug(httpRes);
             if (httpRes.getStatusCode() == 200 && httpRes.getStatus()=='OK') {
-                String responseBody = httpReq.getBody();
-                JSONToPostOfficeRespApex objPO=  (JSONToPostOfficeRespApex) System.JSON.deserialize(responseBody, JSONToPostOfficeRespApex.class);                         
-                List<JSONToPostOfficeRespApex.PostOffice> pO=objPO.PostOffice;
-                System.debug(pO);
+                String responseBody = httpRes.getBody();
+               // JSONToPostOfficeRespApex objPO=  (JSONToPostOfficeRespApex) JSON.deserialize(responseBody, JSONToPostOfficeRespApex.class);                         
+              	System.debug(responseBody);
+                List<JSONToPostOfficeRespApex> objPO= JSONToPostOfficeRespApex.parse(responseBody);
+                
+                List<JSONToPostOfficeRespApex.PostOffice> pO=objPO[0].PostOffice;
+                
+                
                 for (JSONToPostOfficeRespApex.PostOffice variable : pO) {
-                    if (location.Postal_Code__c==variable.PINCode && location.State__c==variable.State
-                                 && location.City__c==variable.Circle ) {
+                    System.debug(location.Postal_Code__c==variable.PINCode );
+                    if (location.Postal_Code__c==variable.PINCode  ) {
                         location.Verified__c=true;
+                        update location;
+                        break;
                     }else {
                         location.Verified__c=false;
                     }
